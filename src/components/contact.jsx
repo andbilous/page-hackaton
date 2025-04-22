@@ -1,28 +1,67 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import emailjs from "emailjs-com";
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMicrophone, faStopCircle } from "@fortawesome/free-solid-svg-icons";
 
 const initialState = {
   name: "",
   email: "",
   message: "",
 };
+
 export const Contact = (props) => {
   const [{ name, email, message }, setState] = useState(initialState);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recognition, setRecognition] = useState(null);
+
+  useEffect(() => {
+    if ("webkitSpeechRecognition" in window) {
+      const speechRecognition = new window.webkitSpeechRecognition();
+      speechRecognition.continuous = false;
+      speechRecognition.interimResults = true;
+      speechRecognition.lang = "en-US"; // You can set the desired language
+
+      speechRecognition.onstart = () => {
+        setIsRecording(true);
+      };
+
+      speechRecognition.onresult = (event) => {
+        let finalTranscript = "";
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          }
+        }
+        setState((prevState) => ({ ...prevState, message: finalTranscript }));
+      };
+
+      speechRecognition.onend = () => {
+        setIsRecording(false);
+      };
+
+      speechRecognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        setIsRecording(false);
+      };
+
+      setRecognition(speechRecognition);
+    } else {
+      console.warn("Browser does not support Speech Recognition API.");
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setState((prevState) => ({ ...prevState, [name]: value }));
   };
+
   const clearState = () => setState({ ...initialState });
-  
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(name, email, message);
-    
-    {/* replace below with your own Service ID, Template ID and Public Key from your EmailJS account */ }
-    
+
     emailjs
       .sendForm("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", e.target, "YOUR_PUBLIC_KEY")
       .then(
@@ -35,6 +74,54 @@ export const Contact = (props) => {
         }
       );
   };
+
+  const startRecording = () => {
+    if (recognition && !isRecording) {
+      recognition.start();
+    }
+  };
+
+  const stopRecording = () => {
+    if (recognition && isRecording) {
+      recognition.stop();
+    }
+  };
+
+  const handleSend = () => {
+    const webhookUrl = "https://api.winning-koala-57696.appmixer.cloud/flows/0434db50-90f6-4c90-98de-1a5e0b0a9d20/components/d686d7d9-8749-4f19-9ec1-57612692b215";
+  
+    // Assuming 'message' state holds the text you want to send
+    const dataToSend = {
+      message: message,
+      name: name, // Assuming 'name' state holds the name
+      email: email, // Assuming 'email' state holds the email
+      // Add any other relevant data you want to send
+    };
+  
+    fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // Adjust if you need to send different data
+      },
+      body: JSON.stringify(dataToSend),
+    })
+      .then(response => {
+        if (!response.ok) {
+          console.error(`HTTP error! status: ${response.status}`);
+          // Handle error response here
+        }
+        return response.json(); // Or response.text() if the webhook returns plain text
+      })
+      .then(data => {
+        console.log('Webhook response:', data);
+        // Handle successful response from the webhook here
+      })
+      .catch(error => {
+        console.error('Error sending to webhook:', error);
+        // Handle network errors or other issues here
+      });
+  };
+
   return (
     <div>
       <div id="contact">
@@ -42,10 +129,9 @@ export const Contact = (props) => {
           <div className="col-md-8">
             <div className="row">
               <div className="section-title">
-                <h2>Get In Touch</h2>
+                <h2>Get In Touch in our voice form</h2>
                 <p>
-                  Please fill out the form below to send us an email and we will
-                  get back to you as soon as possible.
+                Speak your message instead of typing! Fill out the form below or record your voice, and we'll get back to you as soon as possible.
                 </p>
               </div>
               <form name="sentMessage" validate onSubmit={handleSubmit}>
@@ -87,12 +173,36 @@ export const Contact = (props) => {
                     rows="4"
                     placeholder="Message"
                     required
+                    value={message}
                     onChange={handleChange}
                   ></textarea>
                   <p className="help-block text-danger"></p>
+                  <div className="voice-input-controls">
+                    <button
+                      type="button"
+                      onClick={startRecording}
+                      disabled={isRecording || !recognition}
+                      className={isRecording ? "recording" : ""} // Optional: Add class for styling
+                    >
+                      <FontAwesomeIcon icon={faMicrophone} />
+                      {isRecording ? " Recording..." : " Record"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={stopRecording}
+                      disabled={!isRecording || !recognition}
+                    >
+                      <FontAwesomeIcon icon={faStopCircle} /> Stop
+                    </button>
+                    {!recognition && (
+                      <p className="text-warning">
+                        Your browser does not support voice input.
+                      </p>
+                    )}
+                  </div>
                 </div>
                 <div id="success"></div>
-                <button type="submit" className="btn btn-custom btn-lg">
+                <button onClick={handleSend} type="submit" className="btn btn-custom btn-lg">
                   Send Message
                 </button>
               </form>
