@@ -198,6 +198,25 @@ const handleSend = () => {
                 <button onClick={handleSend} type="submit" className="btn btn-custom btn-lg">
                   Send Message
                 </button>
+                  <a
+    style={{
+      textTransform: "uppercase",
+      fontSize: "14px",
+      cursor: "pointer",
+      padding: "12px 18px",
+      fontFamily: "inherit",
+      backgroundColor: "#0075E3",
+      border: "1px solid #0075E3",
+      color: "#FFFFFF",
+      borderRadius: "4px",
+      textDecoration: "none",
+      display: "inline-block"
+    }}
+    href="javascript:void(window.open('https://eu.jotform.com/agent/019661f2fdd17f3f9a1b363a14ef6aca6dc8/voice?embedMode=popup&parentURL='+encodeURIComponent(window.top.location.href),'blank','scrollbars=yes,toolbar=no,width=700,height=500,top='+((window.outerHeight / 2) - 250)+',left='+((window.outerWidth / 2) - 350)))"
+  >
+    🎤 Sales AI Agent
+  </a>
+</div>
               </form>
             </div>
           </div>
