@@ -87,40 +87,33 @@ export const Contact = (props) => {
     }
   };
 
-  const handleSend = () => {
-    const webhookUrl = "https://api.winning-koala-57696.appmixer.cloud/flows/0434db50-90f6-4c90-98de-1a5e0b0a9d20/components/d686d7d9-8749-4f19-9ec1-57612692b215";
-  
-    // Assuming 'message' state holds the text you want to send
-    const dataToSend = {
-      message: message,
-      name: name, // Assuming 'name' state holds the name
-      email: email, // Assuming 'email' state holds the email
-      // Add any other relevant data you want to send
-    };
-  
-    fetch(webhookUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json', // Adjust if you need to send different data
-      },
-      body: JSON.stringify(dataToSend),
-    })
-      .then(response => {
-        if (!response.ok) {
-          console.error(`HTTP error! status: ${response.status}`);
-          // Handle error response here
-        }
-        return response.json(); // Or response.text() if the webhook returns plain text
-      })
-      .then(data => {
-        console.log('Webhook response:', data);
-        // Handle successful response from the webhook here
-      })
-      .catch(error => {
-        console.error('Error sending to webhook:', error);
-        // Handle network errors or other issues here
-      });
+const handleSend = () => {
+  const dataToSend = {
+    message,
+    name,
+    email,
   };
+
+  fetch('/api/webhook', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(dataToSend),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        console.error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log('Webhook response:', data);
+    })
+    .catch((error) => {
+      console.error('Error sending to proxy webhook:', error);
+    });
+};
 
   return (
     <div>
