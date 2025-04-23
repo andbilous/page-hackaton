@@ -198,6 +198,7 @@ const handleSend = () => {
                 <button onClick={handleSend} type="submit" className="btn btn-custom btn-lg">
                   Send Message
                 </button>
+                <div>
                   <a
     style={{
       textTransform: "uppercase",
