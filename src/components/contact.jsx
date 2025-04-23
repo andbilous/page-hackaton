@@ -170,30 +170,29 @@ const handleSend = () => {
                     onChange={handleChange}
                   ></textarea>
                   <p className="help-block text-danger"></p>
-                  <div className="voice-input-controls">
-                    <button
-                      type="button"
-                      onClick={startRecording}
-                      disabled={isRecording || !recognition}
-                      className={isRecording ? "recording" : ""} // Optional: Add class for styling
-                    >
-                      <FontAwesomeIcon icon={faMicrophone} />
-                      {isRecording ? " Recording..." : " Record"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={stopRecording}
-                      disabled={!isRecording || !recognition}
-                    >
-                      <FontAwesomeIcon icon={faStopCircle} /> Stop
-                    </button>
-                    {!recognition && (
-                      <p className="text-warning">
-                        Your browser does not support voice input.
-                      </p>
-                    )}
-                  </div>
-                </div>
+                 <div className="voice-input-controls flex gap-3 mt-2">
+  <button
+    type="button"
+    onClick={startRecording}
+    disabled={isRecording || !recognition}
+    className={`px-4 py-2 rounded font-semibold transition ${
+      isRecording
+        ? "bg-red-500 text-white border border-red-500"
+        : "bg-white text-gray-800 border border-gray-300"
+    }`}
+  >
+    <FontAwesomeIcon icon={faMicrophone} className="mr-2" />
+    {isRecording ? "Recording..." : "Record"}
+  </button>
+  <button
+    type="button"
+    onClick={stopRecording}
+    disabled={!isRecording || !recognition}
+    className="px-4 py-2 rounded bg-white text-gray-800 border border-gray-300 font-semibold transition disabled:opacity-50"
+  >
+    <FontAwesomeIcon icon={faStopCircle} className="mr-2" /> Stop
+  </button>
+</div>
                 <div id="success"></div>
                 <button onClick={handleSend} type="submit" className="btn btn-custom btn-lg">
                   Send Message
