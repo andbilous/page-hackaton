@@ -170,7 +170,7 @@ const handleSend = () => {
                     onChange={handleChange}
                   ></textarea>
                   <p className="help-block text-danger"></p>
-                  <div className="voice-input-controls">
+{/*                   <div className="voice-input-controls">
                     <button
                       type="button"
                       onClick={startRecording}
@@ -192,13 +192,13 @@ const handleSend = () => {
                         Your browser does not support voice input.
                       </p>
                     )}
-                  </div>
+                  </div> */}
                 </div>
                 <div id="success"></div>
                 <button onClick={handleSend} type="submit" className="btn btn-custom btn-lg">
                   Send Message
                 </button>
-                <div>
+{/*                 <div>
                   <a
     style={{
       textTransform: "uppercase",
@@ -217,7 +217,7 @@ const handleSend = () => {
   >
     🎤 Sales AI Agent
   </a>
-</div>
+</div> */}
               </form>
             </div>
           </div>
